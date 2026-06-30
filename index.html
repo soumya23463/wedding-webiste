@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Vivaan &amp; Ananya — A Royal Wedding</title>
+<meta name="description" content="Join us for the royal wedding of Vivaan Malhotra &amp; Ananya Raghunathan — 12th December 2026, The Leela Palace, Udaipur.">
+<meta property="og:title" content="Vivaan &amp; Ananya — A Royal Wedding">
+<meta property="og:description" content="12 December 2026 · The Leela Palace, Udaipur, Rajasthan">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+<link rel="stylesheet" href="css/style.css">
+<script src="config.js"></script>
+</head>
+<body class="bg-[var(--emerald-deep)]">
+
+<!-- ============ SCROLL PROGRESS ============ -->
+<div id="scroll-progress"></div>
+
+<!-- ============ AMBIENT GLOBAL PARTICLES ============ -->
+<canvas id="petals-canvas" class="fixed inset-0 z-[60] pointer-events-none"></canvas>
+
+<!-- ============ FLOATING PALACE NAV (visible after entering) ============ -->
+<nav id="palace-nav" aria-label="Page navigation"></nav>
+
+<!-- ============ MUSIC TOGGLE (global) ============ -->
+<button id="music-toggle" aria-label="Toggle background music" class="fixed bottom-6 right-6 z-[70]">♪</button>
+
+<!-- ============ SCENE 1 : SPLASH ============ -->
+<section id="scene-splash" aria-label="Intro splash screen">
+  <div class="text-center px-6">
+    <svg class="splash-crest mx-auto mb-5" viewBox="0 0 64 64" fill="none">
+      <circle cx="32" cy="32" r="30" stroke="#C9A227" stroke-width="0.75"/>
+      <circle cx="32" cy="32" r="25" stroke="#C9A227" stroke-width="0.4" stroke-dasharray="2 3"/>
+      <path d="M32 14l3.5 10.5H47l-9 6.5 3.5 10.5L32 35l-9.5 6.5L26 31l-9-6.5h11.5z" fill="#E8C766"/>
+    </svg>
+    <p id="splash-names" class="font-display text-2xl md:text-3xl tracking-[0.35em] text-gradient-gold opacity-0"></p>
+    <p id="splash-sub" class="font-serif italic text-base text-[var(--ivory)]/50 mt-3 opacity-0 splash-tagline"></p>
+  </div>
+</section>
+
+<!-- ============ SCENE 2 : ENVELOPE ============ -->
+<section id="scene-envelope" aria-label="Wedding envelope">
+  <div class="text-center">
+    <div class="envelope-wrap">
+      <div class="envelope">
+        <div class="env-body"></div>
+        <div class="env-flap" id="env-flap"></div>
+        <div class="wax-seal" id="wax-seal"><span id="wax-initials">V&amp;A</span></div>
+      </div>
+    </div>
+    <p class="envelope-hint font-display text-[var(--gold-light)] mt-8 uppercase opacity-70" id="envelope-hint">tap the seal to open</p>
+  </div>
+</section>
+
+<!-- ============ SCENE 3 : LETTER ============ -->
+<section id="scene-letter" aria-label="Invitation letter">
+  <div class="letter-card corner-border text-center" id="letter-card">
+    <p class="eyebrow !text-[var(--maroon)] mb-5 tracking-[0.4em]">A Royal Invitation</p>
+    <div class="ornament-divider mb-5"><span>✦</span></div>
+    <h1 class="font-display text-2xl md:text-3xl mb-2 !text-[var(--emerald-deep)]" id="letter-names">Vivaan &amp; Ananya</h1>
+    <p class="font-script text-lg text-[var(--emerald)]/60 mb-4">Together with their families</p>
+    <div class="hairline w-24 mx-auto my-4" style="background:var(--maroon)"></div>
+    <p class="font-serif text-lg md:text-xl leading-loose text-[var(--emerald-deep)]/85" id="letter-body">
+      request the honour of your presence<br>as they begin their forever together.
+    </p>
+    <div class="ornament-divider mt-5 mb-6"><span>❧</span></div>
+    <p class="font-serif italic text-sm text-[var(--emerald-deep)]/55 mb-6" id="letter-date-preview"></p>
+    <button id="btn-reveal-date" class="btn-royal-solid">Reveal the Date</button>
+  </div>
+</section>
+
+<!-- ============ SCENE 4 : SCRATCH CARD ============ -->
+<section id="scene-scratch" class="fixed inset-0 z-[85] flex flex-col items-center justify-center px-6"
+  style="visibility:hidden; opacity:0;" aria-label="Scratch card to reveal the date">
+  <p class="eyebrow mb-2">Scratch To Reveal</p>
+  <p class="font-serif italic text-[var(--ivory)]/40 text-sm mb-6">Your invitation awaits beneath</p>
+  <div class="scratch-wrap">
+    <div class="scratch-reveal corner-border">
+      <p class="font-display text-[var(--gold-light)] text-xl tracking-widest" id="scratch-date"></p>
+      <div class="ornament-divider w-32 my-2"><span>·</span></div>
+      <p class="font-serif italic text-sm text-[var(--ivory)]/65" id="scratch-time"></p>
+      <p class="font-serif text-xs text-[var(--ivory)]/45 mt-1 tracking-wide" id="scratch-venue"></p>
+    </div>
+    <canvas class="scratch-canvas" id="scratch-canvas"></canvas>
+  </div>
+  <p class="text-xs text-[var(--ivory)]/35 mt-6 tracking-[0.35em] uppercase" id="scratch-hint">drag to reveal the gold</p>
+  <button id="btn-enter-palace" class="btn-royal-solid mt-8 hidden">Enter The Palace &ensp;→</button>
+</section>
+
+<!-- ============ MAIN EXPERIENCE ============ -->
+<main id="main-experience" class="relative opacity-0">
+
+  <!-- HERO / COUNTDOWN -->
+  <section id="hero-countdown" class="min-h-screen relative flex flex-col items-center justify-center text-center px-6 overflow-hidden" aria-label="Wedding countdown">
+    <div class="relative z-10" data-reveal>
+      <p class="eyebrow mb-6 tracking-[0.45em]">The Wedding Of</p>
+      <h1 class="font-display text-5xl md:text-7xl text-gradient-gold leading-[1.1]">Vivaan<br><span class="font-script text-3xl md:text-4xl normal-case text-[var(--gold-light)]/75">&amp;</span><br>Ananya</h1>
+      <p class="font-serif italic text-base md:text-lg text-[var(--ivory)]/55 mt-5" id="hero-date-venue"></p>
+
+      <div class="ornament-divider max-w-xs mx-auto my-8"><span>✦</span></div>
+
+      <div class="glass-gold mt-2 px-6 py-7 md:px-10 md:py-8 inline-flex gap-6 md:gap-10" id="countdown-wrap"></div>
+
+      <div class="mt-10 flex justify-center">
+        <svg class="w-6 animate-bounce opacity-60" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="1.5">
+          <path d="M12 5v14M5 12l7 7 7-7"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- PALACE JOURNEY INTRO -->
+  <section id="section-palace-intro" class="py-28 px-6 text-center relative" data-reveal aria-label="Palace journey introduction">
+    <p class="eyebrow">Walk With Us</p>
+    <h2 class="font-display text-3xl md:text-5xl text-[var(--gold-light)] mt-4 mb-3">The Royal Palace Journey</h2>
+    <div class="ornament-divider max-w-48 mx-auto mt-4 mb-6"><span>✦</span></div>
+    <p class="font-serif italic text-[var(--ivory)]/60 max-w-xl mx-auto leading-loose">
+      Seven rooms, seven rituals — each one a world of its own.<br>Scroll on, and let the palace reveal itself.
+    </p>
+  </section>
+
+  <!-- ROOMS injected by JS -->
+  <div id="rooms-container"></div>
+
+  <!-- LOVE STORY -->
+  <section id="section-love-story" class="py-28 px-6 relative" data-reveal aria-label="Our love story">
+    <div class="text-center mb-14">
+      <p class="eyebrow">How It All Began</p>
+      <h2 class="font-display text-3xl md:text-5xl text-[var(--gold-light)] mt-4 mb-3">Our Love Story</h2>
+      <div class="ornament-divider max-w-40 mx-auto mt-4"><span>❦</span></div>
+    </div>
+    <div class="swiper love-story-swiper max-w-5xl mx-auto pb-10">
+      <div class="swiper-wrapper" id="love-story-wrapper"></div>
+      <div class="swiper-pagination mt-6"></div>
+    </div>
+  </section>
+
+  <!-- FAMILIES -->
+  <section id="section-families" class="py-28 px-6 relative" data-reveal aria-label="The families">
+    <div class="text-center mb-14">
+      <p class="eyebrow">With Love &amp; Blessings</p>
+      <h2 class="font-display text-3xl md:text-5xl text-[var(--gold-light)] mt-4 mb-3">Two Families, One Celebration</h2>
+      <div class="ornament-divider max-w-40 mx-auto mt-4"><span>✦</span></div>
+    </div>
+    <div id="families-container" class="max-w-3xl mx-auto grid sm:grid-cols-2 gap-8 px-2"></div>
+    <p class="font-serif italic text-center text-[var(--ivory)]/35 mt-10 text-sm" id="hosts-note-families"></p>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="section-gallery" class="py-28 px-6 relative" data-reveal aria-label="Photo gallery">
+    <div class="text-center mb-14">
+      <p class="eyebrow">Cherished Moments</p>
+      <h2 class="font-display text-3xl md:text-5xl text-[var(--gold-light)] mt-4 mb-3">Gallery</h2>
+      <div class="ornament-divider max-w-36 mx-auto mt-4"><span>✦</span></div>
+    </div>
+    <div id="gallery-masonry" class="masonry max-w-5xl mx-auto" style="column-count:2;"></div>
+  </section>
+
+  <!-- FILM -->
+  <section id="section-film" class="py-28 px-6 text-center relative" data-reveal aria-label="Pre-wedding film">
+    <p class="eyebrow">Watch</p>
+    <h2 class="font-display text-3xl md:text-5xl text-[var(--gold-light)] mt-4 mb-3" id="film-title"></h2>
+    <div class="ornament-divider max-w-40 mx-auto mb-10"><span>▶</span></div>
+    <div class="max-w-3xl mx-auto aspect-video glass border border-[var(--gold)]/35 overflow-hidden">
+      <iframe id="film-embed" class="w-full h-full" src="" title="Pre-wedding film" allowfullscreen></iframe>
+    </div>
+  </section>
+
+  <!-- MENU -->
+  <section id="section-menu" class="py-28 px-6 relative" data-reveal aria-label="Wedding feast menu">
+    <div class="text-center mb-12">
+      <p class="eyebrow">The Royal Feast</p>
+      <h2 class="font-display text-3xl md:text-5xl text-[var(--gold-light)] mt-4 mb-3">Food &amp; Menu</h2>
+      <div class="ornament-divider max-w-40 mx-auto mt-4 mb-2"><span>✦</span></div>
+      <p class="font-serif italic text-[var(--ivory)]/45 text-sm mt-2">Curated with love across every ceremony</p>
+    </div>
+    <div id="menu-tabs" class="flex flex-wrap justify-center gap-3 mb-10"></div>
+    <div id="menu-content" class="max-w-3xl mx-auto"></div>
+  </section>
+
+  <!-- DRESS CODE -->
+  <section id="section-dresscode" class="py-28 px-6 relative" data-reveal aria-label="Dress code guide">
+    <div class="text-center mb-12">
+      <p class="eyebrow">Look The Part</p>
+      <h2 class="font-display text-3xl md:text-5xl text-[var(--gold-light)] mt-4 mb-3">Dress Code</h2>
+      <div class="ornament-divider max-w-36 mx-auto mt-4 mb-2"><span>✦</span></div>
+      <p class="font-serif italic text-[var(--ivory)]/45 text-sm">Wear your finest — every room calls for something special</p>
+    </div>
+    <div id="dresscode-container" class="max-w-4xl mx-auto"></div>
+    <div id="palette-swatches" class="flex justify-center gap-4 mt-10 flex-wrap"></div>
+  </section>
+
+  <!-- DIGITAL INVITATION -->
+  <section id="section-digital-invite" class="py-28 px-6 text-center relative" data-reveal aria-label="Digital invitation sharing">
+    <p class="eyebrow">Carry It With You</p>
+    <h2 class="font-display text-3xl md:text-5xl text-[var(--gold-light)] mt-4 mb-3">Digital Invitation</h2>
+    <div class="ornament-divider max-w-40 mx-auto mt-4 mb-8"><span>✦</span></div>
+    <p class="font-serif italic text-[var(--ivory)]/45 text-sm mb-10">Share the joy with everyone you love</p>
+    <div class="flex flex-wrap justify-center gap-4">
+      <button class="btn-royal" id="btn-download-invite">↓ &ensp;Download Invite</button>
+      <button class="btn-royal" id="btn-share-whatsapp">↗ &ensp;Share on WhatsApp</button>
+      <button class="btn-royal" id="btn-show-qr">⊞ &ensp;QR Code</button>
+      <button class="btn-royal" id="btn-copy-link">⧉ &ensp;Copy Link</button>
+    </div>
+    <div id="qr-box" class="mt-10 hidden">
+      <p class="font-serif italic text-[var(--ivory)]/35 text-xs mb-4 tracking-widest uppercase">Scan to open on any device</p>
+      <canvas id="qr-canvas" width="160" height="160" class="mx-auto bg-white p-2 border border-[var(--gold)]/30"></canvas>
+    </div>
+  </section>
+
+  <!-- VENUE -->
+  <section id="section-venue" class="py-28 px-6 relative" data-reveal aria-label="Venue details">
+    <div class="text-center mb-12">
+      <p class="eyebrow">Find Us</p>
+      <h2 class="font-display text-3xl md:text-5xl text-[var(--gold-light)] mt-4 mb-3">Venue</h2>
+      <div class="ornament-divider max-w-36 mx-auto mt-4"><span>✦</span></div>
+    </div>
+    <div class="max-w-xl mx-auto glass-gold corner-border p-8 md:p-10 text-center">
+      <div class="text-4xl mb-5">🏰</div>
+      <p class="font-display text-xl text-[var(--gold-light)] tracking-wide" id="venue-name"></p>
+      <p class="font-serif italic text-[var(--ivory)]/60 mt-2 leading-relaxed" id="venue-address"></p>
+      <div class="hairline w-20 mx-auto my-6"></div>
+      <div id="venue-details" class="text-left mb-6"></div>
+      <div class="flex flex-wrap justify-center gap-4 mt-8">
+        <a id="btn-navigate" target="_blank" class="btn-royal-solid inline-block">Navigate →</a>
+        <button class="btn-royal" id="btn-hotels">🏨 &ensp;Nearby Hotels</button>
+        <button class="btn-royal" id="btn-parking">🚗 &ensp;Parking Info</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RSVP -->
+  <section id="section-rsvp" class="py-28 px-6 relative" data-reveal aria-label="RSVP form">
+    <div class="text-center mb-12">
+      <p class="eyebrow">Please Respond</p>
+      <h2 class="font-display text-3xl md:text-5xl text-[var(--gold-light)] mt-4 mb-3">RSVP</h2>
+      <div class="ornament-divider max-w-36 mx-auto mt-4 mb-2"><span>✦</span></div>
+      <p class="font-serif italic text-[var(--ivory)]/45 text-sm">Kindly confirm your attendance by 1st November 2026</p>
+    </div>
+    <form id="rsvp-form" class="max-w-md mx-auto glass-gold corner-border p-8 md:p-10">
+      <div class="rsvp-field">
+        <input required name="name" id="rsvp-name" placeholder="Your full name" autocomplete="name">
+        <label for="rsvp-name">Your Full Name</label>
+      </div>
+      <div class="rsvp-field">
+        <input name="email" id="rsvp-email" type="email" placeholder="Email address" autocomplete="email">
+        <label for="rsvp-email">Email Address</label>
+      </div>
+      <div class="mb-6">
+        <p class="eyebrow text-xs mb-3 !opacity-60">Will you be attending?</p>
+        <div class="flex gap-2" id="rsvp-status">
+          <button type="button" data-val="Coming" class="rsvp-opt btn-royal flex-1 !text-[0.6rem] !py-2.5">✓ Coming</button>
+          <button type="button" data-val="Maybe" class="rsvp-opt btn-royal flex-1 !text-[0.6rem] !py-2.5">? Maybe</button>
+          <button type="button" data-val="Not Coming" class="rsvp-opt btn-royal flex-1 !text-[0.6rem] !py-2.5">✕ Regrets</button>
+        </div>
+      </div>
+      <div class="rsvp-field">
+        <input type="number" min="1" max="10" name="guests" id="rsvp-guests" placeholder="1" value="1">
+        <label for="rsvp-guests">Number of Guests</label>
+      </div>
+      <div class="rsvp-field">
+        <select name="meal" id="rsvp-meal">
+          <option value="" disabled selected></option>
+          <option class="text-black" value="vegetarian">Vegetarian</option>
+          <option class="text-black" value="nonveg">Non-Vegetarian</option>
+          <option class="text-black" value="both">Both (Family)</option>
+        </select>
+        <label for="rsvp-meal">Meal Preference</label>
+      </div>
+      <div class="rsvp-field">
+        <input name="message" id="rsvp-msg" placeholder="A short note for the couple">
+        <label for="rsvp-msg">Message (Optional)</label>
+      </div>
+      <button type="submit" class="btn-royal-solid w-full justify-center mt-2">Submit RSVP</button>
+      <p id="rsvp-success" class="text-center font-serif italic text-[var(--gold-light)] mt-5 hidden leading-relaxed">
+        Thank you — we can't wait to celebrate with you! 🌸
+      </p>
+    </form>
+  </section>
+
+  <!-- MEMORY WALL -->
+  <section id="section-memory-wall" class="py-28 px-6 relative" data-reveal aria-label="Memory wall and wishes">
+    <div class="text-center mb-12">
+      <p class="eyebrow">Leave A Wish</p>
+      <h2 class="font-display text-3xl md:text-5xl text-[var(--gold-light)] mt-4 mb-3">Memory Wall</h2>
+      <div class="ornament-divider max-w-36 mx-auto mt-4 mb-2"><span>✦</span></div>
+      <p class="font-serif italic text-[var(--ivory)]/45 text-sm">Write something for the couple to treasure forever</p>
+    </div>
+    <div class="max-w-md mx-auto glass-gold p-6 mb-8">
+      <form id="wish-form" class="space-y-3">
+        <div class="rsvp-field">
+          <input required name="wisher" id="wish-name" placeholder="Your name">
+          <label for="wish-name">Your Name</label>
+        </div>
+        <div class="rsvp-field">
+          <textarea id="wish-text" name="wish" placeholder="Write your wish..." rows="3" style="resize:none;"></textarea>
+          <label for="wish-text" style="top:0.9rem;">Your Wish</label>
+        </div>
+        <button type="submit" id="btn-add-wish" class="btn-royal w-full justify-center !py-2.5">Post Wish &ensp;🤍</button>
+      </form>
+    </div>
+    <div id="wish-wall" class="max-w-4xl mx-auto grid sm:grid-cols-2 gap-5"></div>
+  </section>
+
+  <!-- THANK YOU -->
+  <section id="thank-you" class="min-h-screen relative flex items-center justify-center text-center px-6 overflow-hidden" aria-label="Thank you closing">
+    <canvas id="lantern-canvas" class="absolute inset-0 z-10"></canvas>
+    <div class="relative z-20" data-reveal>
+      <svg class="ty-crest" viewBox="0 0 64 64" fill="none">
+        <circle cx="32" cy="32" r="30" stroke="#C9A227" stroke-width="0.75"/>
+        <circle cx="32" cy="32" r="25" stroke="#C9A227" stroke-width="0.4" stroke-dasharray="2 3"/>
+        <path d="M32 14l3.5 10.5H47l-9 6.5 3.5 10.5L32 35l-9.5 6.5L26 31l-9-6.5h11.5z" fill="#E8C766"/>
+      </svg>
+      <p class="eyebrow mb-4 tracking-[0.45em]">From Our Hearts To Yours</p>
+      <h2 class="font-display text-3xl md:text-5xl text-gradient-gold leading-snug">We Can't Wait To<br>Celebrate With You</h2>
+      <div class="ornament-divider max-w-48 mx-auto my-8"><span>❦</span></div>
+      <p class="font-serif italic text-[var(--ivory)]/50 leading-loose" id="hosts-note"></p>
+      <p class="mt-8 text-xs tracking-[0.35em] text-[var(--gold)]/55" id="hashtag"></p>
+    </div>
+  </section>
+
+</main>
+
+<!-- GALLERY LIGHTBOX -->
+<div id="lightbox" class="fixed inset-0 z-[200] hidden bg-black/85 items-center justify-center p-6">
+  <button id="lightbox-close" class="absolute top-6 right-6 text-[var(--gold-light)] text-lg">✕</button>
+  <div id="lightbox-content" class="max-w-2xl w-full text-center"></div>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
